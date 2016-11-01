@@ -1,0 +1,221 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.MotoPit.MapsActivity"
+    tools:showIn="@layout/app_bar_main"
+    android:id="@+id/mainLayout">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mapLayout"
+        android:layout_above="@+id/optionHeader">
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/trans"
+            android:background="@drawable/round_layout"
+            android:layout_above="@+id/optionHeader">
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/optionHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:padding="10dp"
+            android:background="@drawable/rectoutline"
+            android:layout_above="@+id/optionLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tube"
+                android:text="Tube"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textColor="@color/hint"
+                android:background="@drawable/border"
+                android:padding="10dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   "/>
+
+            <!--<View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/selected_gray" />-->
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tubeLess"
+                android:layout_weight="1"
+                android:text="Tube Less"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textColor="@color/hint"
+                android:background="@drawable/border"
+                android:padding="10dp"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/text_primary"
+            android:padding="10dp"
+            android:id="@+id/optionLayout"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/option"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/infinity"
+                    android:layout_weight="1"
+                    android:src="@drawable/infin_off"
+                    />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/puncture"
+                    android:src="@drawable/punc_off"
+                    android:layout_weight="1"
+                    />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/breakdown"
+                    android:src="@drawable/break_off"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/petrol"
+                    android:src="@drawable/petrol_off"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/general"
+                    android:src="@drawable/general_off"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/optionText"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:layout_below="@+id/option"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/infinityText"
+                    android:layout_weight="1"
+                    android:text="24 Hrs"
+                    android:textColor="@color/hint"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/punctureText"
+                    android:layout_weight="1"
+                    android:text="Puncture"
+                    android:textColor="@color/hint"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/breakdownText"
+                    android:layout_weight="1"
+                    android:text="Brkdown"
+                    android:textColor="@color/hint"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/petrolText"
+                    android:layout_weight="1"
+                    android:text="Petrol"
+                    android:textColor="@color/hint"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/generalText"
+                    android:layout_weight="1"
+                    android:text="Service"
+                    android:textColor="@color/hint"
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
+
+
+
+        <!--<TextView
+            android:id="@+id/latlongLocation"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:background="#ff058fff"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textColor="#ffffffff"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />-->
+    </RelativeLayout>
+
+
+</RelativeLayout>
