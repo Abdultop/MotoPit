@@ -6,20 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.MotoPit.MapsActivity">
+    tools:context="com.motopit.MapsActivity"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <!--<android.support.v7.widget.Toolbar
+        <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />-->
-
+            app:theme="@style/AppTheme.AppBarOverlay"
+            />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -30,9 +31,10 @@
         android:layout_gravity="top|start"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_drawer" />
+        android:src="@drawable/ic_drawer"
+        android:visibility="gone"/>
 
-   <include layout="@layout/content" />
+   <!--<include layout="@layout/content" />-->
 
     <!--  <android.support.design.widget.FloatingActionButton
          android:id="@+id/fab"

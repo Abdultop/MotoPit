@@ -4,4 +4,16 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
+
+    <string name="signedupflag">SIGNEDUPFLAG</string>
+    <string name="loginText">Sign in with your Google Account</string>
+
+    <string-array name="name">
+        <item>Abdul</item>
+        <item>Narendran</item>
+        <item>Purushoth</item>
+        <item>Ramesh</item>
+        <item>Suraj</item>
+        <item>Arulmani</item>
+    </string-array>
 </resources>

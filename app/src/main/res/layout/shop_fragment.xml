@@ -1,0 +1,238 @@
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/text_primary">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/shop"
+                app:layout_collapseMode="parallax"/>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbarShop"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"/>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/shopDetails"
+            android:background="@color/text_primary">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Shop Details"
+                android:id="@+id/shopDetailsTxt"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/shopDetailsTxt"
+                android:background="@color/transparentbackground"
+                android:id="@+id/view"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameDetails"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                android:layout_below="@+id/view"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/shops"
+                    android:id="@+id/shopImages"
+                    android:layout_weight="0.5"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Abdul Garage"
+                    android:id="@+id/shop"
+                    android:layout_weight="1.5"
+                    android:textColor="@color/myNavigationColor"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/user16"
+                    android:id="@+id/imageView2"
+                    android:layout_weight="0.5"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Abdul"
+                    android:id="@+id/shopname"
+                    android:layout_weight="1.5"
+                    android:textColor="@color/myNavigationColor"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dayDetails"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                android:layout_below="@+id/nameDetails"
+                android:padding="10dp">
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/calendar16"
+                    android:id="@+id/dateImage"
+                    android:layout_weight="0.5"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Mon - Fri"
+                    android:id="@+id/day"
+                    android:layout_weight="1.5"
+                    android:textColor="@color/myNavigationColor"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/time16"
+                    android:id="@+id/timeImage"
+                    android:layout_weight="0.5"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="09am - 10pm"
+                    android:id="@+id/time"
+                    android:layout_weight="1.5"
+                    android:textColor="@color/myNavigationColor"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/callDetails"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_below="@+id/dayDetails"
+                android:padding="10dp"
+                android:background="@drawable/rounded_rect_shape">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="9840421086"
+                    android:layout_below="@+id/dayDetails"
+                    android:layout_weight="1.5"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/myNavigationColor"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:src="@drawable/call"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Features Available and Cost"
+                android:id="@+id/featuresDetailsTxt"
+                android:layout_below="@+id/callDetails"
+                android:layout_marginTop="10dp"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/featuresDetailsTxt"
+                android:background="@color/transparentbackground"
+                android:id="@+id/view1"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/option"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                android:layout_below="@+id/view1"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/infinity"
+                    android:layout_weight="1"
+                    android:src="@drawable/infin_off"
+                    />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/puncture"
+                    android:src="@drawable/punc_off"
+                    android:layout_weight="1"
+                    />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/breakdown"
+                    android:src="@drawable/break_off"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/general"
+                    android:src="@drawable/general_off"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/navigations"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        />
+
+</android.support.design.widget.CoordinatorLayout>

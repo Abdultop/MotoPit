@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "406284551530",
+    "project_id": "hale-safeguard-142205"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406284551530:android:34de403bad09ad68",
+        "android_client_info": {
+          "package_name": "com.motopit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406284551530-6uqp79dgrofpib6b0tku8ue0u1rrmig1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.motopit",
+            "certificate_hash": "3BE44E3E1553B8416B206D7B89C00B4730545F48"
+          }
+        },
+        {
+          "client_id": "406284551530-4o4njh4mgpf34b8d4fejbv5ihutpm469.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgLNbK39dLxQ4-FlMhjl149CuVAkQ8A8k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

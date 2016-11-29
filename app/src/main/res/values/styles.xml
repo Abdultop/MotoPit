@@ -4,18 +4,28 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="actionBarTheme">@style/AppTheme.AppBarOverlay</item>
+
+        <item name="android:textColorHint">@color/text_primary</item>
+        <item name="colorControlNormal">@color/text_primary</item>
+        </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!-- title text color -->
+        <item name="android:textColorPrimary">@color/text_primary</item>  <!-- //ActionBar Title Color-->
+        <item name="android:textColor">@color/text_primary</item>         <!--//Three dots menu text color-->
+        <item name="android:background">@color/colorPrimary</item>              <!--//Three dots menu background color-->
+        <item name="actionMenuTextColor">@color/text_primary</item>
+    </style>
+
+
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
