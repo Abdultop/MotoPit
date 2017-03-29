@@ -4,15 +4,20 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +30,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -47,37 +53,37 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 public class AdminFragment extends Fragment {
     AutoCompleteTextView name;
-    EditText latitudes;
-    EditText longitudes;
-    EditText shop;
-    EditText owner;
-    EditText mobile;
-    EditText landline;
-    EditText hours;
-    EditText days;
-    EditText tubeless;
-    EditText tube;
-    EditText service;
-    EditText water;
-    RadioGroup mobility;
-    RadioButton mobilityYes;
-    RadioButton mobilityNo;
-    EditText mobilityAvailable;
-    EditText howlong;
-    CheckBox normal;
-    CheckBox superBike;
-    CheckBox bullet;
+    static EditText latitudes;
+    static EditText longitudes;
+    static EditText shop;
+    static EditText owner;
+    static EditText mobile;
+    static EditText landline;
+    static EditText hours;
+    static EditText days;
+    static EditText tubeless;
+    static EditText tube;
+    static EditText service;
+    static EditText water;
+    static RadioGroup mobility;
+    static RadioButton mobilityYes;
+    static RadioButton mobilityNo;
+    static EditText mobilityAvailable;
+    static EditText howlong;
+    static CheckBox normal;
+    static CheckBox superBike;
+    static CheckBox bullet;
 
     MenuItem save;
     MenuItem sync;
     MenuItem referesh;
+    MenuItem next;
     LocationManager locationManager;
     // GPSTracker class
-    GPSTracker gps;
+    static GPSTracker gps;
     Context context;
 
-    ProgressDialog prgDialog;
-    private Handler responseHandler=null;
+
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -108,11 +114,6 @@ public class AdminFragment extends Fragment {
         superBike = (CheckBox)view.findViewById(R.id.superBike);
         bullet = (CheckBox)view.findViewById(R.id.bullet);
 
-        prgDialog = new ProgressDialog(getActivity());
-        // Set Progress Dialog Text
-        prgDialog.setMessage("Please wait...");
-        // Set Cancelable as False
-        prgDialog.setCancelable(false);
 
         // Get the string array
         final String[] names = getResources().getStringArray(R.array.name);
@@ -120,8 +121,8 @@ public class AdminFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, names);
         name.setAdapter(adapter);
 
-        SharedPreferences receiverShar = context.getSharedPreferences("Name", Context.MODE_PRIVATE);
-        String Urname = receiverShar.getString("urname","");
+        SharedPreferences receiverShar = context.getSharedPreferences("Details", Context.MODE_PRIVATE);
+        String Urname = receiverShar.getString("name","");
         name.setText(Urname);
 
 
@@ -168,6 +169,7 @@ public class AdminFragment extends Fragment {
         }
 
 
+
         return view;
     }
 
@@ -176,7 +178,9 @@ public class AdminFragment extends Fragment {
         // TODO Add your menu entries here
         inflater.inflate(R.menu.control, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        next = menu.findItem(R.id.action_next);
         save = menu.findItem(R.id.action_save);
+        save.setVisible(false);
         sync = menu.findItem(R.id.action_sync);
         referesh = menu.findItem(R.id.action_refresh);
     }
@@ -188,7 +192,7 @@ public class AdminFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id){
-            case R.id.action_save:
+            case R.id.action_next:
                 validation();
                 break;
 
@@ -251,48 +255,39 @@ public class AdminFragment extends Fragment {
                 Utility.isNotNull(mobilityStr) && Utility.isNotNull(mobilityAvailableStr) && Utility.isNotNull(howlongStr) &&
                 Utility.isNotNull(name.getText().toString())){
 
-            SharedPreferences shared = context.getSharedPreferences("Name", Context.MODE_PRIVATE);
+            SharedPreferences shared = context.getSharedPreferences("Details", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = shared.edit();
-            editor.putString("urname", name.getText().toString());
+            editor.putString("latitude", latitudeStr);
+            editor.putString("longitude",longitudeStr);
+            editor.putString("shop",shopStr);
+            editor.putString("owner",ownerStr);
+            editor.putString("mobile",mobileStr);
+            editor.putString("landline",landlineStr);
+            editor.putString("hour",hoursStr);
+            editor.putString("days",daysStr);
+            editor.putString("tubeless",tubelessStr);
+            editor.putString("tube",tubeStr);
+            editor.putString("service",serviceStr);
+            editor.putString("water",waterStr);
+            editor.putString("mobility",mobilityStr);
+            editor.putString("mobilityAvail",mobilityAvailableStr);
+            editor.putString("howlong",howlongStr);
+            editor.putString("normal",normalStr);
+            editor.putString("superBike",superBikeStr);
+            editor.putString("bullet",bulletStr);
+            editor.putString("name",name.getText().toString());
             editor.commit();
 
-            prgDialog.show();
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    postData(latitudeStr, longitudeStr, shopStr, ownerStr, mobileStr, landlineStr, hoursStr,daysStr,tubelessStr,
-                             tubeStr,serviceStr,waterStr,mobilityStr,mobilityAvailableStr,howlongStr,normalStr,superBikeStr,
-                              bulletStr,name.getText().toString());
-                    responseHandler.sendEmptyMessage(0);
-                }
-            });
-            t.start();
-
-            responseHandler = new Handler(){
-                public void handleMessage(Message msg)
-                {
-                    super.handleMessage(msg);
-                    try
-                    {
-                        prgDialog.dismiss();
-                        Toast.makeText(getActivity().getApplicationContext(), "Successfully Saved", Toast.LENGTH_LONG).show();
-                        reset();
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-
+            Intent adminImage = new Intent(context,ImageActivity.class);
+            adminImage.putExtra("item","Image");
+            startActivity(adminImage);
 
         }else {
             Toast.makeText(getActivity().getApplicationContext(), "Please Fill all Fields", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void reset() {
+    public static void reset() {
         if (gps.isGPSEnabled && gps.isNetworkEnabled) {
             latitudes.setText(String.valueOf(gps.latitude));
             longitudes.setText(String.valueOf(gps.longitude));
@@ -317,63 +312,7 @@ public class AdminFragment extends Fragment {
         normal.setChecked(true);
         superBike.setChecked(false);
         bullet.setChecked(false);
-
-
     }
 
-    private void postData(String latitudeStr, String longitudeStr, String shopStr, String ownerStr, String mobileStr,
-                          String landlineStr, String hoursStr, String daysStr, String tubelessStr, String tubeStr,
-                          String serviceStr, String waterStr, String mobilityStr, String mobilityAvailableStr,
-                          String howlongStr, String normalStr, String superBikeStr, String bulletStr,String name) {
-        HttpClient httpClient = new DefaultHttpClient();
-        // replace with your url
-        HttpPost httpPost = new HttpPost("https://docs.google.com/forms/d/18HksFXHY9rcoMeR0Nzyo249xYgg6nFoDuHHl_qD1KC0/formResponse");
 
-
-        //Post Data
-        List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
-        nameValuePair.add(new BasicNameValuePair("entry_1334476336", latitudeStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1959995806", longitudeStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1295177422", shopStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1273251043", ownerStr));
-        nameValuePair.add(new BasicNameValuePair("entry_328484333", mobileStr));
-        nameValuePair.add(new BasicNameValuePair("entry_367027045", landlineStr));
-        nameValuePair.add(new BasicNameValuePair("entry_616810873", hoursStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1548603419", daysStr));
-        nameValuePair.add(new BasicNameValuePair("entry_460536563", tubelessStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1693165769", tubeStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1637289014", serviceStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1255947466", waterStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1629656933", mobilityStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1655267250", mobilityAvailableStr));
-        nameValuePair.add(new BasicNameValuePair("entry_61468702", howlongStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1509053437", normalStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1857739354", superBikeStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1216948728", bulletStr));
-        nameValuePair.add(new BasicNameValuePair("entry_1252657813", name));
-        //Encoding POST data
-        try {
-            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
-        } catch (UnsupportedEncodingException e) {
-            // log exception
-            e.printStackTrace();
-        }
-
-        //making POST request.
-        try {
-
-            HttpResponse response = httpClient.execute(httpPost);
-            // write response to log
-            Log.d("Http Post Response:", response.toString());
-            /*int responseCode = response.getStatusLine().getStatusCode();
-            Log.d("Response Code",String.valueOf(responseCode));*/
-
-        } catch (ClientProtocolException e) {
-            // Log exception
-            e.printStackTrace();
-        } catch (IOException e) {
-            // Log exception
-            e.printStackTrace();
-        }
-    }
 }

@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 007;
     public static DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,12 +77,11 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
         navButton = (FloatingActionButton)findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-
         //show error dialog if GoolglePlayServices not available
         if (!isGooglePlayServicesAvailable()) {
             return;
         }
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+       /* ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if(networkInfo==null && !networkInfo.isConnected()) {
 
@@ -97,7 +98,7 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
             });
             // Showing Alert Message
             alertDialog.show();
-        }else{
+        }*/
             String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
             if(!hasPermissions(this, PERMISSIONS)){
                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -123,7 +124,7 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
                     transaction.commit();
 
                 }
-            }
+
         }
         navButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -423,24 +424,6 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
         if (!isGooglePlayServicesAvailable()) {
             return;
         }
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if(networkInfo==null && !networkInfo.isConnected()) {
-
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            // Setting Dialog Title
-            alertDialog.setTitle("Connectivity");
-            // Setting Dialog Message
-            alertDialog.setMessage("Internet not connected... Check your Connection");
-            // On pressing Settings button
-            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int which) {
-                    finish();
-                }
-            });
-            // Showing Alert Message
-            alertDialog.show();
-        }else{
             String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
             if(!hasPermissions(this, PERMISSIONS)){
                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -467,6 +450,6 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
 
                 }
             }
-        }
+       // }
     }
 }

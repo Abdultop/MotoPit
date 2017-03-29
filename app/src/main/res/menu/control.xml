@@ -10,10 +10,10 @@
         app:showAsAction="ifRoom|withText"/>
 
     <item
-        android:id="@+id/action_save"
+        android:id="@+id/action_next"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_done"
-        android:title="Save"
+        android:icon="@drawable/next"
+        android:title="Next"
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/action_refresh"
@@ -21,4 +21,10 @@
         android:icon="@drawable/sync"
         android:title="Refresh"
         />
+    <item
+        android:id="@+id/action_save"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_done"
+        android:title="Save"
+        app:showAsAction="ifRoom|withText"/>
 </menu>

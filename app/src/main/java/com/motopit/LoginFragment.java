@@ -1,7 +1,9 @@
 package com.motopit;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -65,6 +67,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
               //  .requestScopes(new Scope(Scopes.PLUS_LOGIN))
+                .requestId()
                 .requestEmail()
                 .build();
 
@@ -96,9 +99,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
     }
 
     private void signIn() {
-        showProgressDialog();
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        if(Utility.isNetworkAvailable(context)){
+            showProgressDialog();
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }else{
+            showAlertDialog();
+        }
+
     }
 
 
@@ -178,6 +186,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            int statusCode = result.getStatus().getStatusCode();
             handleSignInResult(result);
         }
     }
@@ -230,15 +239,26 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
         }
     }
 
-    /*private void updateUI(boolean isSignedIn) {
-        if (isSignedIn) {
-            btnSignIn.setVisibility(View.GONE);
+    public void showAlertDialog(){
 
-        } else {
-            btnSignIn.setVisibility(View.VISIBLE);
 
-        }
-    }*/
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            // Setting Dialog Title
+            alertDialog.setTitle("Connectivity");
+            // Setting Dialog Message
+            alertDialog.setMessage("Internet not connected... Check your Connection");
+            // On pressing Settings button
+            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    getActivity().finish();
+                    dialog.dismiss();
+                }
+            });
+            // Showing Alert Message
+            alertDialog.show();
+
+
+    }
 
     @Override
     public void onDestroy() {

@@ -67,7 +67,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by abdul on 2/11/16.
  */
 
-public class MapFragment extends Fragment implements OnMapReadyCallback,LocationListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback,LocationListener{
 
     private SupportMapFragment mapFragment;
     private GoogleMap mMap;
@@ -144,25 +144,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
         tube = (TextView) view.findViewById(R.id.tube);
         tubeLess = (TextView) view.findViewById(R.id.tubeLess);
 
-        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if(networkInfo == null && !networkInfo.isConnected()) {
-
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-            // Setting Dialog Title
-            alertDialog.setTitle("Connectivity");
-            // Setting Dialog Message
-            alertDialog.setMessage("Internet not connected... Check your Connection");
-            // On pressing Settings button
-            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int which) {
-                    getActivity().finish();
-                }
-            });
-            // Showing Alert Message
-            alertDialog.show();
-        }
-        getDataFromServer();
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
         if(!hasPermissions(getActivity(), PERMISSIONS)){
             ActivityCompat.requestPermissions(getActivity(), PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -191,6 +172,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
         this.infoButton = (ImageView) infoWindow.findViewById(R.id.button);
 
         strArr = mydb.getAllDetails();
+
+        if(Utility.isNetworkAvailable(context)){
+            getDataFromServer();
+        }else {
+            showAlertDialog(Utility.isNetworkAvailable(context));
+        }
 
         infinity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -387,7 +374,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
         mMap.addMarker(mp);
         shape = drawCircle(latLng);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
         locationManager.removeUpdates(this);
 
        // String addresses = getCompleteAddressString(location.getLatitude(),location.getLongitude());
@@ -510,7 +497,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.pus));
                 mMap.addMarker(markerOptions);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
             }
 
         }
@@ -629,7 +616,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
 
                     mMap.addMarker(markerOptions);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
                 }
 
@@ -686,5 +673,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
             Log.w("My Current loction addr", "Canont get Address!");
         }
         return strAdd;
+    }
+
+    public void showAlertDialog(boolean isConnected){
+
+        if(!isConnected){
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            // Setting Dialog Title
+            alertDialog.setTitle("Connectivity");
+            // Setting Dialog Message
+            alertDialog.setMessage("Internet not connected... Check your Connection");
+            // On pressing Settings button
+            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog,int which) {
+                    getActivity().finish();
+                    dialog.dismiss();
+                }
+            });
+            // Showing Alert Message
+            alertDialog.show();
+        }
+
     }
 }

@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'motopit'
+            keyPassword 'pass123'
+            storeFile file('/Users/yasodha/AndroidStudioProjects/apk/Motopit/Keystore/motopit.jks')
+            storePassword 'pass123'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
-
     defaultConfig {
         applicationId "com.motopit"
         minSdkVersion 16
@@ -16,9 +23,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
         }
     }
-
     dexOptions {
         javaMaxHeapSize "2g"
     }
@@ -29,7 +38,6 @@ dependencies {
     //For Login with Google Plus Account
     // glide is added to load the g+ profile image. Ignore if you want
     //compile 'com.google.android.gms:play-services:9.8.0'
-
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.google.android.gms:play-services-maps:9.8.0'
     compile 'com.google.android.gms:play-services-location:9.8.0'
@@ -40,6 +48,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.google.firebase:firebase-auth:9.8.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 

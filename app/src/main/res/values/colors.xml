@@ -14,4 +14,6 @@
     <color name="hint">#333333</color>
     <color name="radius">#30FF0000</color>
     <color name="check">#80ed2024</color>
+    <color name="green">#10AF50</color>
+    <color name="red">#E50000</color>
 </resources>
