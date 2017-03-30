@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "103257852000",
-    "project_id": "motopit-debug"
+    "project_number": "952486600414",
+    "project_id": "motopit-162904"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:103257852000:android:34de403bad09ad68",
+        "mobilesdk_app_id": "1:952486600414:android:34de403bad09ad68",
         "android_client_info": {
           "package_name": "com.motopit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "103257852000-od26u53ukeegca9e4vvu7idkfd9m1tgp.apps.googleusercontent.com",
+          "client_id": "952486600414-1hp23i4nhuett79v0c55rb34e3s409u2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.motopit",
-            "certificate_hash": "d84c096899baeb477edc665bd610bd569f1333fa"
+            "certificate_hash": "aaff3ecb1f179954e4518e59d56e53d7e43eb33a"
           }
         },
         {
-          "client_id": "103257852000-faj6pncjo4gn54tctvfvnt6e2uocd0d4.apps.googleusercontent.com",
+          "client_id": "952486600414-q85l0pjp8q8s6ms85shm2v8k3tfu518t.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAXFVVidRzu9QW5b77q5PkOdmj7N53iSRk"
+          "current_key": "AIzaSyC0jFQWgNWwVLnasKN_7XjFdJykJy4ocrQ"
         }
       ],
       "services": {

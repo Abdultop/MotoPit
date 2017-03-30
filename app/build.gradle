@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'motopit'
+            keyAlias 'motopitkey'
             keyPassword 'pass123'
-            storeFile file('/Users/yasodha/AndroidStudioProjects/apk/Motopit/Keystore/motopit.jks')
+            storeFile file('/Users/yasodha/AndroidStudioProjects/keystore/motopit.jks')
             storePassword 'pass123'
         }
     }
@@ -18,6 +18,7 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
@@ -26,10 +27,13 @@ android {
             signingConfig signingConfigs.config
         }
         debug {
+            signingConfig signingConfigs.config
         }
     }
     dexOptions {
         javaMaxHeapSize "2g"
+    }
+    productFlavors {
     }
 }
 

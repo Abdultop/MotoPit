@@ -271,9 +271,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
                 general.setImageResource(R.drawable.general_on);
                 generalText.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                 infinity.setImageResource(R.drawable.infin_off);
+                infinityText.setTextColor(ContextCompat.getColor(context, R.color.hint));
                 puncture.setImageResource(R.drawable.punc_off);
+                punctureText.setTextColor(ContextCompat.getColor(context, R.color.hint));
                 breakdown.setImageResource(R.drawable.break_off);
+                breakText.setTextColor(ContextCompat.getColor(context, R.color.hint));
                 petrol.setImageResource(R.drawable.petrol_off);
+                petrolText.setTextColor(ContextCompat.getColor(context, R.color.hint));
                 transLayout.setVisibility(View.GONE);
                 if(isPanel){
                     slideUpDown(view,false);

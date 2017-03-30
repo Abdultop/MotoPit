@@ -67,8 +67,8 @@ public class ImageActivity extends AppCompatActivity {
 
     private Uri uri;
 
-    String latitude;
-    String longitude;
+    static String latitude;
+    static String longitude;
     static String shop;
     String owner;
     String mobile;
@@ -166,7 +166,7 @@ public class ImageActivity extends AppCompatActivity {
         }
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageName = "IMG_"+shop.trim()+"_"+timeStamp + ".jpg";
+        String imageName = "IMG_"+shop.trim()+"_"+latitude+"&"+longitude+"_"+timeStamp + ".jpg";
         SharedPreferences shared = context.getSharedPreferences("Details", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shared.edit();
         editor.putString("imgName", imageName.trim());
@@ -228,39 +228,43 @@ public class ImageActivity extends AppCompatActivity {
 
         imageName = receiverShar.getString("imgName","");
 
-        prgDialog.show();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                postData(latitude, longitude, shop, owner, mobile, landline, hour,days,tubeless,
-                        tube,service,water,mobility,mobilityAvail,howlong,normal,superBike,
-                        bullet,name,imageName);
-                responseHandler.sendEmptyMessage(0);
-            }
-        });
-        t.start();
-
-        responseHandler = new Handler(){
-            public void handleMessage(Message msg)
-            {
-                super.handleMessage(msg);
-                try
-                {
-                    prgDialog.dismiss();
-                    Toast.makeText(context.getApplicationContext(), "Successfully Saved", Toast.LENGTH_LONG).show();
-                    AdminFragment.reset();
-                    finish();
-                    Intent in = new Intent(context,AnotherActivity.class);
-                    in.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(in);
-
+        if(Utility.isNotNull(imageName)){
+            prgDialog.show();
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    postData(latitude, longitude, shop, owner, mobile, landline, hour,days,tubeless,
+                            tube,service,water,mobility,mobilityAvail,howlong,normal,superBike,
+                            bullet,name,imageName);
+                    responseHandler.sendEmptyMessage(0);
                 }
-                catch (Exception e)
+            });
+            t.start();
+
+            responseHandler = new Handler(){
+                public void handleMessage(Message msg)
                 {
-                    e.printStackTrace();
+                    super.handleMessage(msg);
+                    try
+                    {
+                        prgDialog.dismiss();
+                        Toast.makeText(context.getApplicationContext(), "Successfully Saved", Toast.LENGTH_LONG).show();
+                        AdminFragment.reset();
+                        finish();
+                        Intent in = new Intent(context,AnotherActivity.class);
+                        in.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(in);
+
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        };
+            };
+        }else{
+            Toast.makeText(context.getApplicationContext(), "Please Take Picture", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void postData(String latitudeStr, String longitudeStr, String shopStr, String ownerStr, String mobileStr,

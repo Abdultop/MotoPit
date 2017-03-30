@@ -6,4 +6,14 @@
         <item name="android:textColorHint">@color/transparent</item>
         <!-- colorControlActivated & colorControlHighlight use the colorAccent color by default -->
     </style>
+
+
+        <style name="MyloginEditTextTheme">
+            <!-- Used for the bottom line when not selected / focused -->
+            <item name="colorControlNormal">@color/text_primary</item>
+            <item name="android:textColorHint">@color/text_primary</item>
+            <item name="colorControlActivated">@color/text_primary</item>
+            <!-- colorControlActivated & colorControlHighlight use the colorAccent color by default -->
+        </style>
+
 </resources>
