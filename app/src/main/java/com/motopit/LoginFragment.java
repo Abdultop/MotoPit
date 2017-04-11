@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -37,22 +40,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 /**
  * Created by abdul on 8/11/16.
  */
 
-public class LoginFragment extends Fragment implements View.OnClickListener,GoogleApiClient.OnConnectionFailedListener{
+public class LoginFragment extends Fragment implements View.OnClickListener,GoogleApiClient.OnConnectionFailedListener,LocationListener {
     private static final String TAG = "Login Fragment";
     private static final int RC_SIGN_IN = 007;
 
     private GoogleApiClient mGoogleApiClient;
-    private ProgressDialog mProgressDialog;
+    ProgressDialog mProgressDialog;
 
     private SignInButton btnSignIn;
 
     Context context;
     SharedPreferences pref = null;
     DBHelper mydb;
+
+    // GPSTracker class
+    GPSTracker gps;
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -60,6 +68,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
                 false);
 
         context = getActivity();
+
+        gps = new GPSTracker(getActivity());
+
         mydb = new DBHelper(getActivity());
         btnSignIn = (SignInButton)view.findViewById(R.id.btn_sign_in);
         btnSignIn.setOnClickListener(this);
@@ -100,9 +111,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
 
     private void signIn() {
         if(Utility.isNetworkAvailable(context)){
-            showProgressDialog();
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            startActivityForResult(signInIntent, RC_SIGN_IN);
+            Log.d("Gps", String.valueOf(gps.isGPSEnabled));
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                showProgressDialog();
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+                // mProgressDialog.dismiss();
+            }else{
+                Intent callGPSSettingIntent = new Intent(
+                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(callGPSSettingIntent);
+            }
         }else{
             showAlertDialog();
         }
@@ -161,6 +181,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
             ((MapsActivity) getActivity()).navigatetoMapActivity(personPhotoUrl,personName,email);
            // updateUI(true);
         } else {
+            hideProgressDialog();
             // Signed out, show unauthenticated UI.
             //updateUI(false);
         }
@@ -281,5 +302,25 @@ public class LoginFragment extends Fragment implements View.OnClickListener,Goog
             mGoogleApiClient.stopAutoManage(getActivity());
             mGoogleApiClient.disconnect();
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }

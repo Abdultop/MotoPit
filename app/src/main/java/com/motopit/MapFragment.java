@@ -3,6 +3,7 @@ package com.motopit;
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -144,6 +145,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
         tube = (TextView) view.findViewById(R.id.tube);
         tubeLess = (TextView) view.findViewById(R.id.tubeLess);
 
+        if(!gps.isGPSEnabled){
+
+        }
+
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
         if(!hasPermissions(getActivity(), PERMISSIONS)){
             ActivityCompat.requestPermissions(getActivity(), PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -160,11 +165,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
             mapFragment.getMapAsync(this);
             mainCoordinatorLayout = (RelativeLayout) view.findViewById(R.id.mainLayout);
             locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                gps.showSettingsAlert();
-            }
-
         }
 
         this.infoWindow = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.custominfowindow, null);
@@ -698,5 +698,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
             alertDialog.show();
         }
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
+        if(!hasPermissions(getActivity(), PERMISSIONS)){
+            ActivityCompat.requestPermissions(getActivity(), PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
+        }else {
+            permissionFlag = true;
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            FragmentManager fm = getChildFragmentManager();
+            mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+            if (mapFragment == null) {
+                mapFragment = SupportMapFragment.newInstance();
+                fm.beginTransaction().replace(R.id.map, mapFragment).commit();
+            }
+            // mMap = mapFragment.getMap();
+            mapFragment.getMapAsync(this);
+            mainCoordinatorLayout = (RelativeLayout) view.findViewById(R.id.mainLayout);
+            locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+
+
+        }
     }
 }

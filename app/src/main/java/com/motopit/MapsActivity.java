@@ -1,13 +1,17 @@
 package com.motopit;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -40,8 +44,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.support.design.widget.NavigationView;
@@ -49,7 +62,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 
 
-public class MapsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MapsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback {
 
     private boolean doubleBackToExitPressedOnce = false;
     Context context;
@@ -65,7 +78,10 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 007;
     public static DrawerLayout drawer;
+   // private GoogleApiClient locationGoogleApiClient;
 
+
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,29 +93,21 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
         navButton = (FloatingActionButton)findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        //show error dialog if GoolglePlayServices not available
-        if (!isGooglePlayServicesAvailable()) {
-            return;
-        }
-       /* ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if(networkInfo==null && !networkInfo.isConnected()) {
+       /* if(locationGoogleApiClient == null){
+            //11-4-17 @Abdul For Check GPS Enable or not
+            locationGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) context)
+                    .addOnConnectionFailedListener(this).build();
+            locationGoogleApiClient.connect();
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            // Setting Dialog Title
-            alertDialog.setTitle("Connectivity");
-            // Setting Dialog Message
-            alertDialog.setMessage("Internet not connected... Check your Connection");
-            // On pressing Settings button
-            alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int which) {
-                    finish();
-                }
-            });
-            // Showing Alert Message
-            alertDialog.show();
-        }*/
-            String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
+            settingsrequest();  //11-4-17 @Abdul For Ask Permission for GPS Enabled
+        }
+*/
+
+
+
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
             if(!hasPermissions(this, PERMISSIONS)){
                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
             }else {
@@ -296,6 +304,66 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+/*
+    //11-4-17 @Abdul For Ask Permission for GPS Enabled Method
+    public void settingsrequest()
+    {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setNeedBle(true);
+        builder.setAlwaysShow(true); //this is the key ingredient
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(locationGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(MapsActivity.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+// Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_LONG).show();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        settingsrequest();//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
+    }*/
     /*public void onResume(){
         super.onResume();
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
@@ -424,7 +492,17 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
         if (!isGooglePlayServicesAvailable()) {
             return;
         }
-            String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
+        /*if(locationGoogleApiClient == null){
+            //11-4-17 @Abdul For Check GPS Enable or not
+            locationGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) context)
+                    .addOnConnectionFailedListener(this).build();
+            locationGoogleApiClient.connect();
+
+            settingsrequest();  //11-4-17 @Abdul For Ask Permission for GPS Enabled
+        }*/
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
             if(!hasPermissions(this, PERMISSIONS)){
                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
             }else {
@@ -451,5 +529,26 @@ public class MapsActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
        // }
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onResult(@NonNull Result result) {
+
     }
 }

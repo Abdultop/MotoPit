@@ -58,6 +58,7 @@ public class GPSTracker extends Service implements LocationListener {
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             if (!isGPSEnabled && !isNetworkEnabled) {
+              //  showSettingsAlert();
                 // no network provider is enabled
             } else {
                 this.canGetLocation = true;
@@ -169,7 +170,7 @@ public class GPSTracker extends Service implements LocationListener {
         // on pressing cancel button
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                dialog.dismiss();
 
             }
         });

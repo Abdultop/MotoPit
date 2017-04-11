@@ -8,6 +8,12 @@ android {
             storeFile file('/Users/yasodha/AndroidStudioProjects/keystore/motopit.jks')
             storePassword 'pass123'
         }
+        release {
+            keyAlias 'motopitkey'
+            keyPassword 'pass123'
+            storeFile file('/Users/yasodha/AndroidStudioProjects/keystore/motopit.jks')
+            storePassword 'pass123'
+        }
     }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -24,10 +30,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.release
+            debuggable true
         }
         debug {
-            signingConfig signingConfigs.config
         }
     }
     dexOptions {
