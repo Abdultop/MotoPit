@@ -5,11 +5,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,16 +29,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.FileChannel;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -55,10 +71,8 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 public class ImageActivity extends AppCompatActivity {
 
     static Context context;
-    ImageView imageView;
-    ImageButton cameraButton;
+
     private final int CAMERA_REQUEST = 20;
-    Bitmap bitmap;
 
     MenuItem save;
     MenuItem sync;
@@ -86,11 +100,20 @@ public class ImageActivity extends AppCompatActivity {
     String superBike;
     String bullet;
     String name;
-    String imageName;
 
     ProgressDialog prgDialog;
     private Handler responseHandler=null;
     SharedPreferences receiverShar;
+
+    Button captureBtn = null;
+    final int CAMERA_CAPTURE = 1;
+
+    private GridView grid;
+    private  List<ImageItem> listOfImagesPath;
+
+    public static final String GridViewDemo_ImagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/GridViewDemo/";
+
+    String imageNames = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,11 +123,18 @@ public class ImageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         context = this;
 
-        imageView = (ImageView)findViewById(R.id.images);
-        cameraButton = (ImageButton)findViewById(R.id.camButton);
+        captureBtn = (Button)findViewById(R.id.capture_btn1);
+
+        grid = ( GridView) findViewById(R.id.gridviewimg);
+
+
+        listOfImagesPath = null;
+        listOfImagesPath = RetriveCapturedImagePath();
+        if(listOfImagesPath!=null){
+            grid.setAdapter(new ImageGridAdapter(context,listOfImagesPath));
+        }
 
         prgDialog = new ProgressDialog(this);
         // Set Progress Dialog Text
@@ -134,7 +164,7 @@ public class ImageActivity extends AppCompatActivity {
         name = receiverShar.getString("name","");
 
 
-        // camera butoon event listener
+       /* // camera butoon event listener
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,14 +179,55 @@ public class ImageActivity extends AppCompatActivity {
                     startActivityForResult(photoCaptureIntent, CAMERA_REQUEST);
                 }
             }
+        });*/
+        captureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    String[] PERMISSIONS = {android.Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
+                    if (!MapsActivity.hasPermissions(context,PERMISSIONS)){
+                        ActivityCompat.requestPermissions((Activity) context, PERMISSIONS, 1);
+                    } else {
+                        //use standard intent to capture an image
+                        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        uri = FileProvider.getUriForFile(ImageActivity.this, BuildConfig.APPLICATION_ID + ".provider", getOutputMediaFile());
+                        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        //we will handle the returned data in onActivityResult
+                        startActivityForResult(captureIntent, CAMERA_CAPTURE);
+                    }
+                } catch(ActivityNotFoundException anfe){
+                    //display an error message
+                    String errorMessage = "Whoops - your device doesn't support capturing images!";
+                    Toast toast = Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
         });
-
         setTitle("Image Loader");
+    }
+
+    private List<ImageItem> RetriveCapturedImagePath() {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Motopit/tmp");
+        List<ImageItem> tFileList = new ArrayList<ImageItem>();
+        File f = new File(mediaStorageDir.getPath());
+        if (f.exists()) {
+            File[] files=f.listFiles();
+            if(files!=null && files.length>0){
+                Arrays.sort(files);
+                for(int i=0; i<files.length; i++){
+                    File file = files[i];
+                    if(file.isDirectory())
+                        continue;
+                    tFileList.add(new ImageItem(file.getPath()));
+                }
+            }
+        }
+        return tFileList;
     }
 
     private static File getOutputMediaFile(){
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "Motopit");
+                Environment.DIRECTORY_PICTURES), "Motopit/tmp");
 
         if (!mediaStorageDir.exists()){
             if (!mediaStorageDir.mkdirs()){
@@ -167,10 +238,10 @@ public class ImageActivity extends AppCompatActivity {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageName = "IMG_"+shop.trim()+"_"+latitude+"&"+longitude+"_"+timeStamp + ".jpg";
-        SharedPreferences shared = context.getSharedPreferences("Details", Context.MODE_PRIVATE);
+       /* SharedPreferences shared = context.getSharedPreferences("Details", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shared.edit();
         editor.putString("imgName", imageName.trim());
-        editor.commit();
+        editor.commit();*/
         return new File(mediaStorageDir.getPath() + File.separator +imageName);
     }
 
@@ -204,7 +275,22 @@ public class ImageActivity extends AppCompatActivity {
                     Toast.makeText(context,"Saved Successfully",Toast.LENGTH_SHORT).show();
                 }*/
                 if(Utility.isNetworkAvailable(context)){
-                    callWebServer();
+                    // callWebServer();
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+                    File sourceStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Motopit/tmp");
+                    File destStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Motopit/"+timeStamp);
+                    try {
+                        if(sourceStorageDir.listFiles().length>0){
+                            if(copyDirectory(sourceStorageDir,destStorageDir)){
+
+                            }
+                        }else{
+                            Toast.makeText(context,"Image cannot be Empty!",Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }else {
                     showAlertDialog();
                 }
@@ -223,19 +309,53 @@ public class ImageActivity extends AppCompatActivity {
 
     }
 
+    public Boolean copyDirectory(File sourceLocation , File targetLocation)throws IOException {
+
+        // FileUtils.copyFile(sourceLocation, targetLocation);
+
+        if (sourceLocation.isDirectory()) {
+            if (!targetLocation.exists()) {
+                targetLocation.mkdir();
+            }
+            String[] children = sourceLocation.list();
+            StringBuilder sb = new StringBuilder();
+            Log.d("ListFiles", String.valueOf(children.length));
+            for (int i = 0; i < children.length; i++) {
+                copyDirectory(new File(sourceLocation, children[i]),new File(targetLocation, children[i]));
+                sb.append(children[i]).append(",");
+                new File(sourceLocation, children[i]).delete();
+            }
+            imageNames = String.valueOf(sb.deleteCharAt(sb.length()-1));
+            Log.d("String", imageNames);
+
+        } else {
+            InputStream in = new FileInputStream(sourceLocation);
+            OutputStream out = new FileOutputStream(targetLocation);
+
+            // Copy the bits from instream to outstream
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        }
+        return true;
+    }
+
+
     private void callWebServer() {
 
 
-        imageName = receiverShar.getString("imgName","");
-
-        if(Utility.isNotNull(imageName)){
+        if(Utility.isNotNull(imageNames)){
             prgDialog.show();
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     postData(latitude, longitude, shop, owner, mobile, landline, hour,days,tubeless,
                             tube,service,water,mobility,mobilityAvail,howlong,normal,superBike,
-                            bullet,name,imageName);
+                            bullet,name,imageNames);
                     responseHandler.sendEmptyMessage(0);
                 }
             });
@@ -327,10 +447,40 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("requestCode", String.valueOf(requestCode)+","+"resultCode"+resultCode);
+        /*Log.d("requestCode", String.valueOf(requestCode)+","+"resultCode"+resultCode);
        // Toast.makeText(context,requestCode+"--"+resultCode,Toast.LENGTH_SHORT).show();
         if(CAMERA_REQUEST == requestCode && resultCode == RESULT_OK){
-            imageView.setImageURI(uri);
+            //imageView.setImageURI(uri);
+            imageItemArrayList.add(new ImageItem(uri));
+
+        }
+        adapter = new ImageGridAdapter(context,imageItemArrayList);
+        gridView.setAdapter(adapter);*/
+
+        if (resultCode == RESULT_OK) {
+//user is returning from capturing an image using the camera
+            if(requestCode == CAMERA_CAPTURE){
+              /*  Bundle extras = data.getExtras();
+                Bitmap thePic = extras.getParcelable("data");
+                String imgcurTime = dateFormat.format(new Date());
+                File imageDirectory = new File(GridViewDemo_ImagePath);
+                imageDirectory.mkdirs();
+                String _path = GridViewDemo_ImagePath + imgcurTime+".jpg";
+                try {
+                    FileOutputStream out = new FileOutputStream(_path);
+                    thePic.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.close();
+                } catch (FileNotFoundException e) {
+                    e.getMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+                listOfImagesPath = null;
+                listOfImagesPath = RetriveCapturedImagePath();
+                if(listOfImagesPath!=null){
+                    grid.setAdapter(new ImageGridAdapter(context,listOfImagesPath));
+                }
+            }
         }
     }
 
@@ -370,4 +520,70 @@ public class ImageActivity extends AppCompatActivity {
         super.onResume();
     }
 
+   /* public class ImageListAdapter extends BaseAdapter {
+        private Context context;
+        private List<String> imgPic;
+        public ImageListAdapter(Context c, List<ImageItem> thePic)
+        {
+            context = c;
+            imgPic = thePic;
+        }
+        public int getCount() {
+            if(imgPic != null)
+                return imgPic.size();
+            else
+                return 0;
+        }
+
+        //---returns the ID of an item---
+        public Object getItem(int position) {
+            return position;
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        //---returns an ImageView view---
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            ImageView imageView;
+            BitmapFactory.Options bfOptions=new BitmapFactory.Options();
+            bfOptions.inDither=false;                     //Disable Dithering mode
+            bfOptions.inPurgeable=true;                   //Tell to gc that whether it needs free memory, the Bitmap can be cleared
+            bfOptions.inInputShareable=true;              //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
+            bfOptions.inTempStorage=new byte[32 * 1024];
+            if (convertView == null) {
+                imageView = new ImageView(context);
+                imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                imageView.setPadding(0, 0, 0, 0);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+            FileInputStream fs = null;
+            Bitmap bm;
+            try {
+                fs = new FileInputStream(new File(imgPic.get(position).toString()));
+
+                if(fs!=null) {
+                    bm= BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
+                    imageView.setImageBitmap(bm);
+                    imageView.setId(position);
+                    imageView.setLayoutParams(new GridView.LayoutParams(200, 160));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                if(fs!=null) {
+                    try {
+                        fs.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return imageView;
+        }
+
+    }*/
 }

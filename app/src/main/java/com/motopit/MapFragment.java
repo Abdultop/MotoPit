@@ -145,9 +145,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
         tube = (TextView) view.findViewById(R.id.tube);
         tubeLess = (TextView) view.findViewById(R.id.tubeLess);
 
-        if(!gps.isGPSEnabled){
-
-        }
 
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
         if(!hasPermissions(getActivity(), PERMISSIONS)){
@@ -700,6 +697,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
 
     }
 
+    /**
+     * Show a dialog to the user requesting that GPS be enabled
+     */
+    private void showDialogGPS(boolean enable) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setTitle("Enable GPS");
+        builder.setMessage("Please enable GPS");
+        builder.setInverseBackgroundForced(true);
+        builder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        if(enable){
+            alert.show();
+        }else {
+            alert.dismiss();
+        }
+
+    }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -707,22 +733,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,Location
         String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION};
         if(!hasPermissions(getActivity(), PERMISSIONS)){
             ActivityCompat.requestPermissions(getActivity(), PERMISSIONS, REQUEST_ID_MULTIPLE_PERMISSIONS);
+        }
+
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        boolean enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean netWorkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(!enabled && !netWorkEnabled) {
+            Log.d("TEst","true");
+            showDialogGPS(true);
         }else {
-            permissionFlag = true;
-            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-            FragmentManager fm = getChildFragmentManager();
-            mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
-            if (mapFragment == null) {
-                mapFragment = SupportMapFragment.newInstance();
-                fm.beginTransaction().replace(R.id.map, mapFragment).commit();
-            }
-            // mMap = mapFragment.getMap();
-            mapFragment.getMapAsync(this);
-            mainCoordinatorLayout = (RelativeLayout) view.findViewById(R.id.mainLayout);
-            locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-
-
-
+            Log.d("TEst","false");
+            showDialogGPS(false);
         }
     }
 }

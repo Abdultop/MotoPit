@@ -145,9 +145,9 @@ public class AdminFragment extends Fragment {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if(networkInfo!=null && networkInfo.isConnected()) {
-            if (gps.isGPSEnabled && gps.isNetworkEnabled) {
-                latitudes.setText(String.valueOf(gps.latitude));
-                longitudes.setText(String.valueOf(gps.longitude));
+            if (gps.canGetLocation()) {
+                latitudes.setText(String.valueOf(gps.getLatitude()));
+                longitudes.setText(String.valueOf(gps.getLongitude()));
 
             }else{
                 gps.showSettingsAlert();
@@ -197,9 +197,9 @@ public class AdminFragment extends Fragment {
                 break;
 
             case R.id.action_sync:
-                if (gps.isGPSEnabled && gps.isNetworkEnabled) {
-                    latitudes.setText(String.valueOf(gps.latitude));
-                    longitudes.setText(String.valueOf(gps.longitude));
+                if (gps.canGetLocation()) {
+                    latitudes.setText(String.valueOf(gps.getLatitude()));
+                    longitudes.setText(String.valueOf(gps.getLongitude()));
 
                 }else{
                     gps.showSettingsAlert();
@@ -248,12 +248,12 @@ public class AdminFragment extends Fragment {
         final String bulletStr;
         if(bullet.isChecked()){bulletStr="Yes";}else {bulletStr = "No";}
 
-        if (Utility.isNotNull(latitudeStr) && Utility.isNotNull(longitudeStr) && Utility.isNotNull(shopStr) &&
+        /*if (Utility.isNotNull(latitudeStr) && Utility.isNotNull(longitudeStr) && Utility.isNotNull(shopStr) &&
                 Utility.isNotNull(ownerStr) && Utility.isNotNull(mobileStr) && Utility.isNotNull(landlineStr) &&
                 Utility.isNotNull(hoursStr) && Utility.isNotNull(daysStr) && Utility.isNotNull(tubelessStr) &&
                 Utility.isNotNull(tubeStr) && Utility.isNotNull(serviceStr) && Utility.isNotNull(waterStr) &&
                 Utility.isNotNull(mobilityStr) && Utility.isNotNull(mobilityAvailableStr) && Utility.isNotNull(howlongStr) &&
-                Utility.isNotNull(name.getText().toString())){
+                Utility.isNotNull(name.getText().toString())){*/
 
             SharedPreferences shared = context.getSharedPreferences("Details", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = shared.edit();
@@ -282,15 +282,15 @@ public class AdminFragment extends Fragment {
             adminImage.putExtra("item","Image");
             startActivity(adminImage);
 
-        }else {
+        /*}else {
             Toast.makeText(getActivity().getApplicationContext(), "Please Fill all Fields", Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     public static void reset() {
-        if (gps.isGPSEnabled && gps.isNetworkEnabled) {
-            latitudes.setText(String.valueOf(gps.latitude));
-            longitudes.setText(String.valueOf(gps.longitude));
+        if (gps.canGetLocation()) {
+            latitudes.setText(String.valueOf(gps.getLatitude()));
+            longitudes.setText(String.valueOf(gps.getLongitude()));
 
         }else{
             gps.showSettingsAlert();
